@@ -2,12 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
+using TransactionManagementAPI.Data.DTOs;
 
 namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 {
     public class DeleteTransaction
     {
-        public class Command : IRequest<bool>
+        public class Command : IRequest<Response>
         {
             public int Id { get; set; }
 
@@ -17,7 +18,7 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
             }
         }
 
-        public class Handler : IRequestHandler<DeleteTransaction.Command, bool>
+        public class Handler : IRequestHandler<DeleteTransaction.Command, Response>
         {
             private readonly AppDbContext _context;
 
@@ -26,16 +27,16 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
                 _context = context;
             }
 
-            public async Task<bool> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<Response> Handle(Command command, CancellationToken cancellationToken)
             {
                 var result = await _context.Transactions.FindAsync(command.Id);
                 if (result != null)
                 {
                     _context.Transactions.Remove(result);
                     await _context.SaveChangesAsync();
-                    return true;
+                    return new Response() { Status = "Successfully", Message = "Trasnaction successfully deleted" };
                 }
-                return false;
+                return new Response() { Status = "Not found", Message = "Trasnaction not found" };
             }
         }
     }
