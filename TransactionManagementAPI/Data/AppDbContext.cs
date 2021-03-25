@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using TouristClubApi.Data.Models;
-using TransactionManagementAPI.Data;
 
-namespace TouristClubApi.Data
+namespace TransactionManagementAPI.Data
 {
     public class AppDbContext : IdentityDbContext<User>
     {

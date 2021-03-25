@@ -1,12 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using TouristClubApi.Data;
 using TouristClubApi.Data.Models;
+using TransactionManagementAPI.Data;
 using TransactionManagementAPI.Data.Models;
 
 namespace TransactionManagementAPI.Features.Commands.UsersCRUD

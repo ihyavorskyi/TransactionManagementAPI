@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
 using TransactionManagementAPI.Features.Commands.TransactionsCRUD;
+using TransactionManagementAPI.Features.Query.TransactionsCRUD;
 
 namespace TransactionManagementAPI.Controllers
 {
@@ -17,6 +17,14 @@ namespace TransactionManagementAPI.Controllers
         public TransactionController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAsync()
+        {
+            var query = new GetAllTransactions.Query();
+            var res = await _mediator.Send(query);
+            return Ok(res);
         }
 
         [HttpPost]
@@ -36,7 +44,7 @@ namespace TransactionManagementAPI.Controllers
         //}
 
         //[HttpPut]
-        //public async Task<IActionResult> EditAsync(TransactionModel article)
+        //public async Task<IActionResult> EditStatusAsync(TransactionModel article)
         //{
         //    var command = new EditTransaction.Command(article);
         //    var res = await _mediator.Send(command);

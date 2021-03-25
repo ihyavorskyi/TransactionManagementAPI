@@ -11,8 +11,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 using System.Text;
-using TouristClubApi.Data;
 using TouristClubApi.Data.Models;
+using TransactionManagementAPI.Data;
 
 namespace TransactionManagementAPI
 {
