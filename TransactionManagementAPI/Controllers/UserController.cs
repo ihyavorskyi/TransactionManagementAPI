@@ -20,14 +20,10 @@ namespace TransactionManagementAPI.Controllers
     public class UserController : Controller
     {
         private readonly IMediator _mediator;
-        private readonly UserManager<User> _userManager;
-        private readonly IConfiguration _configuration;
 
-        public UserController(IMediator mediator, UserManager<User> userManager, IConfiguration configuration)
+        public UserController(IMediator mediator)
         {
             _mediator = mediator;
-            _userManager = userManager;
-            _configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -41,30 +37,9 @@ namespace TransactionManagementAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(LoginModel model)
         {
-            if (model == null)
-            {
-                return BadRequest("Invalid client request");
-            }
-            var user = await _userManager.FindByNameAsync(model.UserName);
-
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
-            {
-                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
-                var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-                var tokeOptions = new JwtSecurityToken(
-                    issuer: "http://localhost:5000",
-                    audience: "http://localhost:5000",
-                    claims: new List<Claim>(),
-                    expires: DateTime.Now.AddMinutes(5),
-                    signingCredentials: signinCredentials
-                );
-                var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-                return Ok(new { Token = tokenString });
-            }
-            else
-            {
-                return Unauthorized();
-            }
+            var command = new LoginUser.Command(model);
+            var res = await _mediator.Send(command);
+            return Ok(res);
         }
     }
 }

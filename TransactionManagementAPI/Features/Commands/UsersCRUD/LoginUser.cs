@@ -5,13 +5,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using TouristClubApi.Data.Models;
 using TransactionManagementAPI.Data;
+using TransactionManagementAPI.Data.DTOs;
 using TransactionManagementAPI.Data.Models;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace TransactionManagementAPI.Features.Commands.UsersCRUD
 {
     public class LoginUser
     {
-        public class Command : IRequest<bool>
+        public class Command : IRequest<LoginResponse>
         {
             public LoginModel Model { get; set; }
 
@@ -21,22 +28,41 @@ namespace TransactionManagementAPI.Features.Commands.UsersCRUD
             }
         }
 
-        public class Handler : IRequestHandler<LoginUser.Command, bool>
+        public class Handler : IRequestHandler<LoginUser.Command, LoginResponse>
         {
-            private readonly AppDbContext _context;
             private readonly UserManager<User> _userManager;
-            private readonly IConfiguration _configuration;
 
-            public Handler(AppDbContext context, UserManager<User> userManager, IConfiguration configuration)
+            public Handler(UserManager<User> userManager)
             {
-                _context = context;
                 _userManager = userManager;
-                _configuration = configuration;
             }
 
-            public async Task<bool> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<LoginResponse> Handle(Command command, CancellationToken cancellationToken)
             {
-                return false;
+                if (command.Model == null)
+                {
+                    return new LoginResponse() { Status = "Bad Request", Message = "Invalid client request", Token = "" };
+                }
+                var user = await _userManager.FindByNameAsync(command.Model.UserName);
+
+                if (user != null && await _userManager.CheckPasswordAsync(user, command.Model.Password))
+                {
+                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
+                    var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                    var tokeOptions = new JwtSecurityToken(
+                        issuer: "http://localhost:5000",
+                        audience: "http://localhost:5000",
+                        claims: new List<Claim>(),
+                        expires: DateTime.Now.AddMinutes(15),
+                        signingCredentials: signinCredentials
+                    );
+                    var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+                    return new LoginResponse() { Status = "Successfully", Message = "Token received", Token = tokenString };
+                }
+                else
+                {
+                    return new LoginResponse() { Status = "Unauthorized", Message = "User not found", Token = "" };
+                }
             }
         }
     }
