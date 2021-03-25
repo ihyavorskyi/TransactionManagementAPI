@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
+using TransactionManagementAPI.Data.DTOs;
 using TransactionManagementAPI.Features.Commands.TransactionsCRUD;
 using TransactionManagementAPI.Features.Query.TransactionsCRUD;
 
@@ -43,13 +44,13 @@ namespace TransactionManagementAPI.Controllers
         //    return Ok(res);
         //}
 
-        //[HttpPut]
-        //public async Task<IActionResult> EditStatusAsync(TransactionModel article)
-        //{
-        //    var command = new EditTransaction.Command(article);
-        //    var res = await _mediator.Send(command);
-        //    return Ok(res);
-        //}
+        [HttpPut("status")]
+        public async Task<IActionResult> EditStatusAsync(EditTransactionDto article)
+        {
+            var command = new EditTransactionStatus.Command(article);
+            var res = await _mediator.Send(command);
+            return Ok(res);
+        }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
