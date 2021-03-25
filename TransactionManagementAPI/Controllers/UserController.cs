@@ -8,7 +8,6 @@ using TransactionManagementAPI.Data.Models;
 using TransactionManagementAPI.Features.Commands.UsersCRUD;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -42,35 +41,30 @@ namespace TransactionManagementAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(LoginModel model)
         {
-            //var command = new LoginUser.Command(model);
-            //var res = await _mediator.Send(command);
-            //return Ok(res);
+            if (model == null)
+            {
+                return BadRequest("Invalid client request");
+            }
+            var user = await _userManager.FindByNameAsync(model.UserName);
 
-            //var user = await _userManager.FindByNameAsync(model.UserName);
-            //if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
-            //{
-            //    var authClaims = new List<Claim>
-            //        {
-            //            new Claim(ClaimTypes.Name,user.UserName),
-            //            new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
-            //        };
-
-            //    var authSingingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-            //    var token = new JwtSecurityToken(
-            //        issuer: _configuration["JWT:ValidIssuer"],
-            //        audience: _configuration["JWT:ValidAudience"],
-            //        expires: DateTime.Now.AddHours(3),
-            //        claims: authClaims,
-            //        signingCredentials: new SigningCredentials(authSingingKey, SecurityAlgorithms.HmacSha256)
-            //    );
-            //    return Ok(new
-            //    {
-            //        token = new JwtSecurityTokenHandler().WriteToken(token),
-            //        expiration = token.ValidTo,
-            //        User = user.UserName
-            //    });
-            //}
-            //return Unauthorized();
+            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            {
+                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
+                var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                var tokeOptions = new JwtSecurityToken(
+                    issuer: "http://localhost:5000",
+                    audience: "http://localhost:5000",
+                    claims: new List<Claim>(),
+                    expires: DateTime.Now.AddMinutes(5),
+                    signingCredentials: signinCredentials
+                );
+                var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+                return Ok(new { Token = tokenString });
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 }

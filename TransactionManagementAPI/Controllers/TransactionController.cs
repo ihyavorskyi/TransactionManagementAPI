@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
@@ -6,6 +7,7 @@ using TransactionManagementAPI.Features.Commands.TransactionsCRUD;
 
 namespace TransactionManagementAPI.Controllers
 {
+    // [Authorize]
     [Route("api/transactions")]
     [ApiController]
     public class TransactionController : ControllerBase
