@@ -1,8 +1,10 @@
 ﻿using MediatR;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
 using TransactionManagementAPI.Data.DTOs;
+using TransactionManagementAPI.Data.Enums;
 
 namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 {
@@ -29,7 +31,7 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 
             public async Task<Response> Handle(Command command, CancellationToken cancellationToken)
             {
-                if ((int)command.TransactionDto.Status > 2)
+                if (Enum.IsDefined(typeof(TransactionStatus), command.TransactionDto.Status))
                 {
                     return new Response() { Status = "Error", Message = "Wrong status. Available statuses:  Pending = 0, Completed = 1, Cancelled = 2" };
                 }

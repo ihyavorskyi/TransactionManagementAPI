@@ -9,8 +9,8 @@ namespace TransactionManagementAPI.Data
         [Column("TransactionId")]
         public int Id { get; set; }
 
-        public Status Status { get; set; }
-        public Type Type { get; set; }
+        public TransactionStatus Status { get; set; }
+        public TransactionType Type { get; set; }
         public string ClientName { get; set; }
         public string Amount { get; set; }
     }

@@ -1,6 +1,6 @@
 ﻿namespace TransactionManagementAPI.Data.Enums
 {
-    public enum Type
+    public enum TransactionType
     {
         Withdrawal,
         Refill

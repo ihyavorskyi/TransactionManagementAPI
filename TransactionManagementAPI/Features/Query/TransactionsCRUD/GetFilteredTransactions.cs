@@ -5,16 +5,17 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
+using TransactionManagementAPI.Data.TransactionFilters;
 
 namespace TransactionManagementAPI.Features.Query.TransactionsCRUD
 {
-    public class GetAllTransactions
+    public class GetFilteredTransactions
     {
         public class Query : IRequest<IEnumerable<Transaction>>
         {
         }
 
-        public class Handler : IRequestHandler<GetAllTransactions.Query, IEnumerable<Transaction>>
+        public class Handler : IRequestHandler<GetFilteredTransactions.Query, IEnumerable<Transaction>>
         {
             private readonly AppDbContext _context;
 

@@ -1,6 +1,6 @@
 ﻿namespace TransactionManagementAPI.Data.Enums
 {
-    public enum Status
+    public enum TransactionStatus
     {
         Pending,
         Completed,

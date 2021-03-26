@@ -5,6 +5,6 @@ namespace TransactionManagementAPI.Data.DTOs
     public class EditTransactionDto
     {
         public int Id { get; set; }
-        public Status Status { get; set; }
+        public TransactionStatus Status { get; set; }
     }
 }
