@@ -22,6 +22,14 @@ namespace TransactionManagementAPI.Controllers
             _mediator = mediator;
         }
 
+        [HttpGet("client/{name}")]
+        public async Task<IActionResult> GeClientByNameAsync(string name)
+        {
+            var query = new GeClientByName.Query(name);
+            var res = await _mediator.Send(query);
+            return Ok(res);
+        }
+
         [HttpGet("getFiltered/{filters}")]
         public async Task<IActionResult> GetFilteredAsync(TransactionFilters filters)
         {

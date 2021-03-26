@@ -23,12 +23,10 @@ namespace TransactionManagementAPI.Features
 
         public class Handler : IRequestHandler<ExportToExcel.Command, bool>
         {
-            private readonly AppDbContext _context;
             private readonly IMediator _mediator;
 
-            public Handler(AppDbContext context, IMediator mediator)
+            public Handler(IMediator mediator)
             {
-                _context = context;
                 _mediator = mediator;
             }
 
@@ -38,7 +36,7 @@ namespace TransactionManagementAPI.Features
                 var transactions = await _mediator.Send(query);
 
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                using (var package = new ExcelPackage(new FileInfo(command.Options.FileName + ".xlsx")))
+                using (var package = new ExcelPackage(new FileInfo("ExcelFiles\\" + command.Options.FileName + ".xlsx")))
                 {
                     ExcelWorksheet excelWorksheet = package.Workbook.Worksheets.Add("Transactions");
                     excelWorksheet.Cells.LoadFromCollection<Transaction>(transactions, true);
