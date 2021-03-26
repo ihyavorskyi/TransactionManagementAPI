@@ -7,7 +7,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TouristClubApi.Data.Models;
-using TransactionManagementAPI.Data;
 using TransactionManagementAPI.Data.DTOs;
 using TransactionManagementAPI.Data.Models;
 

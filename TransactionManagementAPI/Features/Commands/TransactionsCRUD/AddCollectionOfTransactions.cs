@@ -1,9 +1,8 @@
 ﻿using MediatR;
-using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
+using TransactionManagementAPI.Features.Query.WorkWithCsv;
 
 namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 {
@@ -11,11 +10,11 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
     {
         public class Command : IRequest<bool>
         {
-            public IEnumerable<Transaction> Transactions { get; set; }
+            public string FileName { get; set; }
 
-            public Command(IEnumerable<Transaction> transactions)
+            public Command(string fileName)
             {
-                Transactions = transactions;
+                FileName = fileName;
             }
         }
 
@@ -30,7 +29,9 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 
             public async Task<bool> Handle(Command command, CancellationToken cancellationToken)
             {
-                foreach (var transaction in command.Transactions)
+                var transactions = CsvHelper.ParseCsvTransaction(command.FileName);
+
+                foreach (var transaction in transactions)
                 {
                     var transactionExist = await _context.Transactions.FindAsync(transaction.Id);
 
@@ -43,8 +44,8 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
                         transaction.Id = 0;
                         await _context.Transactions.AddAsync(transaction);
                     }
-                    await _context.SaveChangesAsync();
                 }
+                await _context.SaveChangesAsync();
                 return true;
             }
         }

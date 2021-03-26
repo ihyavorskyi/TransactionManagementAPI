@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
-using TransactionManagementAPI.Data.TransactionFilters;
+using TransactionManagementAPI.Data.Enums;
 
 namespace TransactionManagementAPI.Features.Query.TransactionsCRUD
 {
@@ -13,6 +13,12 @@ namespace TransactionManagementAPI.Features.Query.TransactionsCRUD
     {
         public class Query : IRequest<IEnumerable<Transaction>>
         {
+            public TransactionFilters Filters { get; set; }
+
+            public Query(TransactionFilters filters)
+            {
+                Filters = filters;
+            }
         }
 
         public class Handler : IRequestHandler<GetFilteredTransactions.Query, IEnumerable<Transaction>>
@@ -26,15 +32,34 @@ namespace TransactionManagementAPI.Features.Query.TransactionsCRUD
 
             public async Task<IEnumerable<Transaction>> Handle(Query request, CancellationToken cancellationToken)
             {
-                var transactions = await _context.Transactions
-                    .Select(tr => new Transaction
+                var transactions = new List<Transaction>();
+
+                var hasTypeFlag = request.Filters.HasFlag(TransactionFilters.Withdrawal) || request.Filters.HasFlag(TransactionFilters.Refill);
+                var hasStatusFlag = request.Filters.HasFlag(TransactionFilters.Pending) || request.Filters.HasFlag(TransactionFilters.Completed) || request.Filters.HasFlag(TransactionFilters.Cancelled);
+
+                if (hasTypeFlag)
+                {
+                    if (hasStatusFlag)
                     {
-                        Id = tr.Id,
-                        Status = tr.Status,
-                        Type = tr.Type,
-                        ClientName = tr.ClientName,
-                        Amount = tr.Amount
-                    }).ToListAsync();
+                        transactions = await _context.Transactions
+                                                .Where(tr => request.Filters.HasFlag((TransactionFilters)tr.Type)
+                                                && request.Filters.HasFlag((TransactionFilters)tr.Status))
+                                                .ToListAsync();
+                    }
+                    else
+                    {
+                        transactions = await _context.Transactions
+                                                .Where(tr => request.Filters.HasFlag((TransactionFilters)tr.Type))
+                                                .ToListAsync();
+                    }
+                }
+                else
+                {
+                    transactions = await _context.Transactions
+                        .Where(tr => request.Filters.HasFlag((TransactionFilters)tr.Status))
+                        .ToListAsync();
+                }
+
                 return transactions;
             }
         }

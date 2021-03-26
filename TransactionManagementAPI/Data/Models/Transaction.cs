@@ -12,6 +12,6 @@ namespace TransactionManagementAPI.Data
         public TransactionStatus Status { get; set; }
         public TransactionType Type { get; set; }
         public string ClientName { get; set; }
-        public string Amount { get; set; }
+        public float Amount { get; set; }
     }
 }

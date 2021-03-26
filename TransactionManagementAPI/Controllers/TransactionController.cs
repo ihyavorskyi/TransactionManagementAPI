@@ -1,13 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
 using TransactionManagementAPI.Data.DTOs;
-using TransactionManagementAPI.Data.TransactionFilters;
+using TransactionManagementAPI.Data.Enums;
+using TransactionManagementAPI.Features;
 using TransactionManagementAPI.Features.Commands.TransactionsCRUD;
 using TransactionManagementAPI.Features.Query.TransactionsCRUD;
-using TransactionManagementAPI.Features.Query.WorkWithCsv;
 
 namespace TransactionManagementAPI.Controllers
 {
@@ -23,21 +22,13 @@ namespace TransactionManagementAPI.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("getFiltered/{id}/{id1}")]
-        public async Task<IActionResult> GetFilteredAsync(bool id, bool id1)
+        [HttpGet("getFiltered/{filters}")]
+        public async Task<IActionResult> GetFilteredAsync(TransactionFilters filters)
         {
-            var query = new GetFilteredTransactions.Query();
+            var query = new GetFilteredTransactions.Query(filters);
             var res = await _mediator.Send(query);
             return Ok(res);
         }
-
-        //[HttpGet("client")]
-        //public async Task<IActionResult> GetAsync()
-        //{
-        //    var query = new GetAllTransactions.Query();
-        //    var res = await _mediator.Send(query);
-        //    return Ok(res);
-        //}
 
         [HttpPost]
         public async Task<IActionResult> CreateAsync(Transaction transaction)
@@ -50,10 +41,15 @@ namespace TransactionManagementAPI.Controllers
         [HttpPost("exportFromCsv/{fileName}")]
         public async Task<IActionResult> ExportFromCsvAsync(string fileName)
         {
-            var fromCsv = new WorkWithCsv(fileName);
-            var transactions = fromCsv.Read();
+            var command = new AddCollectionOfTransactions.Command(fileName);
+            var res = await _mediator.Send(command);
+            return Ok(res);
+        }
 
-            var command = new AddCollectionOfTransactions.Command(transactions);
+        [HttpPost("exportToExcel")]
+        public async Task<IActionResult> ExportToExcelAsync(ExcelExportOptions options)
+        {
+            var command = new ExportToExcel.Command(options);
             var res = await _mediator.Send(command);
             return Ok(res);
         }

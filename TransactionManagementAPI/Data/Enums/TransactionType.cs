@@ -2,7 +2,7 @@
 {
     public enum TransactionType
     {
-        Withdrawal,
-        Refill
+        Withdrawal = 8,
+        Refill = 16
     }
 }
