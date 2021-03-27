@@ -9,7 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using TouristClubApi.Data.Models;
 using TransactionManagementAPI.Data;
@@ -74,7 +77,7 @@ namespace TransactionManagementAPI
             // Configure Swagger for authorization
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "TouristClubAPI", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "TransactionManagementAPI", Version = "v1" });
                 var security = new Dictionary<string, IEnumerable<string>>
                 {
                      {"Bearer", new string[0] }
@@ -105,10 +108,15 @@ namespace TransactionManagementAPI
                      }
                 });
                 options.CustomSchemaIds(f => f.FullName);
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
             });
 
             var assembly = typeof(Startup).Assembly;
             services.AddMediatR(assembly);
+
+            Console.WriteLine("ddddd");
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

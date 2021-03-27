@@ -22,27 +22,27 @@ namespace TransactionManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Post method for registration new user.
+        /// Login user into the system
         /// </summary>
-        /// <param name="model"> User registration model </param>
-        /// <returns> Operation status </returns>
-        [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterModel model)
+        /// <remarks> Get JWT for authorization </remarks>
+        /// <param name="userName"> The user name for login </param>
+        /// <param name="password"> The password for login </param>
+        /// <returns> Execution status and JWT for using the system </returns>
+        [HttpGet("login")]
+        public async Task<IActionResult> LoginAsync(string userName, string password)
         {
-            var command = new RegisterUser.Command(model);
+            var command = new LoginUser.Command(new LoginModel() { UserName = userName, Password = password });
             var res = await _mediator.Send(command);
             return Ok(res);
         }
 
-        /// <summary>
-        /// Post method for login user.
-        /// </summary>
-        /// <param name="model"> User login model </param>
-        /// <returns> Operation status and JWT for using the system </returns>
-        [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(LoginModel model)
+        /// <summary> Create new user </summary>
+        /// <param name="model"> User registration model </param>
+        /// <returns> Execution status </returns>
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterAsync(RegisterModel model)
         {
-            var command = new LoginUser.Command(model);
+            var command = new RegisterUser.Command(model);
             var res = await _mediator.Send(command);
             return Ok(res);
         }

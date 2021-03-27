@@ -12,7 +12,7 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
     /// </summary>
     public class AddCollectionOfTransactions
     {
-        public class Command : IRequest<bool>
+        public class Command : IRequest<string>
         {
             /// <summary>
             /// Csv file name for parsing transaction from him
@@ -25,7 +25,7 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
             }
         }
 
-        public class Handler : IRequestHandler<AddCollectionOfTransactions.Command, bool>
+        public class Handler : IRequestHandler<AddCollectionOfTransactions.Command, string>
         {
             private readonly AppDbContext _context;
 
@@ -34,7 +34,7 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
                 _context = context;
             }
 
-            public async Task<bool> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
                 // Parsing transaction from Csv file
                 var transactions = CsvHelper.ParseCsvTransaction(command.FileName);
@@ -56,7 +56,7 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
                     }
                 }
                 await _context.SaveChangesAsync();
-                return true;
+                return "New transactions added or updated them status";
             }
         }
     }

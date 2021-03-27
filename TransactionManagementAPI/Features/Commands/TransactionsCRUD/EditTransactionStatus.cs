@@ -37,12 +37,6 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
-                // Checking exist new status in system
-                if (Enum.IsDefined(typeof(TransactionStatus), command.TransactionDto.Status))
-                {
-                    return "Wrong status. Available statuses:  Pending = 0, Completed = 1, Cancelled = 2";
-                }
-
                 // Finding transaction and changing them status
                 var transaction = await _context.Transactions.FindAsync(command.TransactionDto.Id);
                 if (transaction != null)
@@ -52,7 +46,7 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
                     return "Status changed successfully";
                 }
 
-                return "Status not changed";
+                return "Transaction not found";
             }
         }
     }

@@ -39,7 +39,7 @@ namespace TransactionManagementAPI.Features
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
                 // Receiving transactions on the set filters
-                var query = new GetFilteredTransactions.Query(command.Settings.TransactionFilters);
+                var query = new GetFilteredTransactions.Query((int)command.Settings.TransactionFilters);
                 var transactions = await _mediator.Send(query);
 
                 // Creating new excel file and writing transactions to him

@@ -21,9 +21,9 @@ namespace TransactionManagementAPI.Features.Query.TransactionsCRUD
             /// </summary>
             public TransactionFilters Filters { get; set; }
 
-            public Query(TransactionFilters filters)
+            public Query(int filters)
             {
-                Filters = filters;
+                Filters = (TransactionFilters)filters;
             }
         }
 
