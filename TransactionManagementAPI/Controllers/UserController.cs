@@ -6,6 +6,10 @@ using TransactionManagementAPI.Features.Commands.UsersCRUD;
 
 namespace TransactionManagementAPI.Controllers
 {
+    /// <summary>
+    /// Used to manage users in the system.
+    /// Сan be used by unauthorized users.
+    /// </summary>
     [Route("api/users")]
     [ApiController]
     public class UserController : Controller
@@ -17,6 +21,11 @@ namespace TransactionManagementAPI.Controllers
             _mediator = mediator;
         }
 
+        /// <summary>
+        /// Post method for registration new user.
+        /// </summary>
+        /// <param name="model"> User registration model </param>
+        /// <returns> Operation status </returns>
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterModel model)
         {
@@ -25,6 +34,11 @@ namespace TransactionManagementAPI.Controllers
             return Ok(res);
         }
 
+        /// <summary>
+        /// Post method for login user.
+        /// </summary>
+        /// <param name="model"> User login model </param>
+        /// <returns> Operation status and JWT for using the system </returns>
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(LoginModel model)
         {

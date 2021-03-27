@@ -10,6 +10,10 @@ using TransactionManagementAPI.Features.Query.TransactionsCRUD;
 
 namespace TransactionManagementAPI.Controllers
 {
+    /// <summary>
+    /// Used to manage transaction in the system.
+    /// Сan be used only by authorized users.
+    /// </summary>
     // [Authorize]
     [Route("api/transactions")]
     [ApiController]
