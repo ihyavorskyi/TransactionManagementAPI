@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Text;
 using TouristClubApi.Data.Models;
 using TransactionManagementAPI.Data;
+using TransactionManagementAPI.Middleware;
 
 namespace TransactionManagementAPI
 {
@@ -119,6 +120,8 @@ namespace TransactionManagementAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseHttpsRedirection();
 
