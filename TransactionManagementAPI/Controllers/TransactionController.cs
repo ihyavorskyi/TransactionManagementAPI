@@ -37,6 +37,13 @@ namespace TransactionManagementAPI.Controllers
             return Ok(res);
         }
 
+        /// <summary> Get filtred transactions </summary>
+        /// <remarks> To determine the numerical representation of the filter, add numbers that correspond to a certain status or type<br/>
+        /// Numerical representations of filters : <br/>Pending = 1, <br/>Completed = 2, <br/>Cancelled = 4,<br/>Withdrawal = 8,<br/>Refill = 16
+        /// <br/><br/> Example: to get transactions with status "Pending" and types "Withdrawal", "Refill" filters = 25 (explanation : 1+8+16=25).
+        /// </remarks>
+        /// <param name="filters"> Numerical representation of the filter </param>
+        /// <returns> Transactions collection </returns>
         [HttpGet("getFiltered/{filters}")]
         public async Task<IActionResult> GetFilteredAsync(int filters)
         {
@@ -59,6 +66,17 @@ namespace TransactionManagementAPI.Controllers
             var res = await _mediator.Send(command);
             return Ok(res);
         }
+
+        /// <summary> Export to excel filtred transactions </summary>
+        /// <remarks> To determine the numerical representation of the filter, add numbers that correspond to a certain status or type<br/>
+        /// Numerical representations of filters : <br/>Pending = 1, <br/>Completed = 2, <br/>Cancelled = 4,<br/>Withdrawal = 8,<br/>Refill = 16
+        /// <br/><br/> Example: to excel transactions with status "Pending","Completed" and type "Refill" transactionFilters = 19 (explanation : 1+2+16=19).
+        /// </remarks>
+        /// <param name="options">
+        /// fileName = name for new excel file
+        /// transactionFilters = numerical representation of the filter
+        /// </param>
+        /// <returns></returns>
 
         [HttpPost("exportToExcel")]
         public async Task<IActionResult> ExportToExcelAsync(ExcelExportSettings options)
