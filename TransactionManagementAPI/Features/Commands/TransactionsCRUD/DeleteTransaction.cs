@@ -6,10 +6,16 @@ using TransactionManagementAPI.Data.DTOs;
 
 namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 {
+    /// <summary>
+    /// Class for deleting transaction
+    /// </summary>
     public class DeleteTransaction
     {
-        public class Command : IRequest<Response>
+        public class Command : IRequest<string>
         {
+            /// <summary>
+            /// Transaction id for deleting
+            /// </summary>
             public int Id { get; set; }
 
             public Command(int id)
@@ -18,7 +24,7 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
             }
         }
 
-        public class Handler : IRequestHandler<DeleteTransaction.Command, Response>
+        public class Handler : IRequestHandler<DeleteTransaction.Command, string>
         {
             private readonly AppDbContext _context;
 
@@ -27,16 +33,17 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
                 _context = context;
             }
 
-            public async Task<Response> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
+                // If transaction exist delete him
                 var result = await _context.Transactions.FindAsync(command.Id);
                 if (result != null)
                 {
                     _context.Transactions.Remove(result);
                     await _context.SaveChangesAsync();
-                    return new Response() { Status = "Successfully", Message = "Trasnaction successfully deleted" };
+                    return "Trasnaction successfully deleted";
                 }
-                return new Response() { Status = "Not found", Message = "Trasnaction not found" };
+                return "Trasnaction not found";
             }
         }
     }

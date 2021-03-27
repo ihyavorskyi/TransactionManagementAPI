@@ -9,19 +9,25 @@ using TransactionManagementAPI.Features.Query.TransactionsCRUD;
 
 namespace TransactionManagementAPI.Features
 {
+    /// <summary>
+    /// Class for exporting filtred transactions to excel file
+    /// </summary>
     public class ExportToExcel
     {
-        public class Command : IRequest<bool>
+        public class Command : IRequest<string>
         {
-            public ExcelExportOptions Options { get; set; }
+            /// <summary>
+            /// Settings for export
+            /// </summary>
+            public ExcelExportSettings Settings { get; set; }
 
-            public Command(ExcelExportOptions options)
+            public Command(ExcelExportSettings settings)
             {
-                Options = options;
+                Settings = settings;
             }
         }
 
-        public class Handler : IRequestHandler<ExportToExcel.Command, bool>
+        public class Handler : IRequestHandler<ExportToExcel.Command, string>
         {
             private readonly IMediator _mediator;
 
@@ -30,19 +36,21 @@ namespace TransactionManagementAPI.Features
                 _mediator = mediator;
             }
 
-            public async Task<bool> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
-                var query = new GetFilteredTransactions.Query(command.Options.TransactionFilters);
+                // Receiving transactions on the set filters
+                var query = new GetFilteredTransactions.Query(command.Settings.TransactionFilters);
                 var transactions = await _mediator.Send(query);
 
+                // Creating new excel file and writing transactions to him
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                using (var package = new ExcelPackage(new FileInfo("ExcelFiles\\" + command.Options.FileName + ".xlsx")))
+                using (var package = new ExcelPackage(new FileInfo("ExcelFiles\\" + command.Settings.FileName + ".xlsx")))
                 {
                     ExcelWorksheet excelWorksheet = package.Workbook.Worksheets.Add("Transactions");
                     excelWorksheet.Cells.LoadFromCollection<Transaction>(transactions, true);
                     package.Save();
                 }
-                return true;
+                return "Created new file :" + command.Settings.FileName + ".xlsx. You can found them in ExcelFiles folder";
             }
         }
     }

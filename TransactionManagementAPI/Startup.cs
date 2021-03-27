@@ -31,11 +31,13 @@ namespace TransactionManagementAPI
         {
             services.AddControllers();
 
+            // Configure Entity Framework Sql Server
             services.AddEntityFrameworkSqlServer().AddDbContext<AppDbContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("LocalDb"));
             });
 
+            // Configure Identity
             services.AddIdentity<User, IdentityRole>(set =>
             {
                 set.Password = new PasswordOptions()
@@ -49,6 +51,7 @@ namespace TransactionManagementAPI
                 set.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<AppDbContext>();
 
+            // Configure Authentication and JWT
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,6 +71,7 @@ namespace TransactionManagementAPI
                 };
             });
 
+            // Configure Swagger for authorization
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "TouristClubAPI", Version = "v1" });

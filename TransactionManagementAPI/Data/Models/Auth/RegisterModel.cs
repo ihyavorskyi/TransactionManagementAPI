@@ -2,6 +2,9 @@
 
 namespace TransactionManagementAPI.Data.Models
 {
+    /// <summary>
+    /// New user registration model
+    /// </summary>
     public class RegisterModel
     {
         [Required(ErrorMessage = "User name is required")]

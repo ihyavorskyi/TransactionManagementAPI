@@ -25,7 +25,7 @@ namespace TransactionManagementAPI.Controllers
         [HttpGet("client/{name}")]
         public async Task<IActionResult> GeClientByNameAsync(string name)
         {
-            var query = new GeClientByName.Query(name);
+            var query = new GetClientByName.Query(name);
             var res = await _mediator.Send(query);
             return Ok(res);
         }
@@ -55,7 +55,7 @@ namespace TransactionManagementAPI.Controllers
         }
 
         [HttpPost("exportToExcel")]
-        public async Task<IActionResult> ExportToExcelAsync(ExcelExportOptions options)
+        public async Task<IActionResult> ExportToExcelAsync(ExcelExportSettings options)
         {
             var command = new ExportToExcel.Command(options);
             var res = await _mediator.Send(command);

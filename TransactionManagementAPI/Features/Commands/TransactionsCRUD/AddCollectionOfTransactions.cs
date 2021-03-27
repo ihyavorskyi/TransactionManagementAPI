@@ -6,10 +6,17 @@ using TransactionManagementAPI.Features.Query.WorkWithCsv;
 
 namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 {
+    /// <summary>
+    /// Class that causes transaction parsing from a Csv file,
+    /// and adds them to the database using merge on id transaction
+    /// </summary>
     public class AddCollectionOfTransactions
     {
         public class Command : IRequest<bool>
         {
+            /// <summary>
+            /// Csv file name for parsing transaction from him
+            /// </summary>
             public string FileName { get; set; }
 
             public Command(string fileName)
@@ -29,12 +36,15 @@ namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 
             public async Task<bool> Handle(Command command, CancellationToken cancellationToken)
             {
+                // Parsing transaction from Csv file
                 var transactions = CsvHelper.ParseCsvTransaction(command.FileName);
 
                 foreach (var transaction in transactions)
                 {
                     var transactionExist = await _context.Transactions.FindAsync(transaction.Id);
 
+                    // If transaction exist update her status,
+                    // else create new transaction in DataBase
                     if (transactionExist != null)
                     {
                         transactionExist.Status = transaction.Status;

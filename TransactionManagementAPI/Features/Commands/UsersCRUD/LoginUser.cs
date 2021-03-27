@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading;
@@ -14,10 +16,16 @@ using TransactionManagementAPI.Data.Models;
 
 namespace TransactionManagementAPI.Features.Commands.UsersCRUD
 {
+    /// <summary>
+    /// Class for user login and creating new JWT for them
+    /// </summary>
     public class LoginUser
     {
         public class Command : IRequest<LoginResponse>
         {
+            /// <summary>
+            /// User login model
+            /// </summary>
             public LoginModel Model { get; set; }
 
             public Command(LoginModel model)
@@ -37,12 +45,16 @@ namespace TransactionManagementAPI.Features.Commands.UsersCRUD
 
             public async Task<LoginResponse> Handle(Command command, CancellationToken cancellationToken)
             {
+                // If there is no model return
                 if (command.Model == null)
                 {
-                    return new LoginResponse() { Status = "Bad Request", Message = "Invalid client request", Token = "" };
+                    return new LoginResponse() { Message = "Invalid client request", Token = "" };
                 }
+
+                // Find user in DataBase
                 var user = await _userManager.FindByNameAsync(command.Model.UserName);
 
+                // If user exist creating new JWT for him and authorizes in the system
                 if (user != null && await _userManager.CheckPasswordAsync(user, command.Model.Password))
                 {
                     var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"));
@@ -55,11 +67,11 @@ namespace TransactionManagementAPI.Features.Commands.UsersCRUD
                         signingCredentials: signinCredentials
                     );
                     var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-                    return new LoginResponse() { Status = "Successfully", Message = "Token received", Token = tokenString };
+                    return new LoginResponse() { Message = "Token received", Token = tokenString };
                 }
                 else
                 {
-                    return new LoginResponse() { Status = "Unauthorized", Message = "User not found", Token = "" };
+                    return new LoginResponse() { Message = "User not found", Token = "" };
                 }
             }
         }

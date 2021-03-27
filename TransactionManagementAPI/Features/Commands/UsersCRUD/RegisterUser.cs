@@ -12,10 +12,16 @@ using TransactionManagementAPI.Data.Models;
 
 namespace TransactionManagementAPI.Features.Commands.UsersCRUD
 {
+    /// <summary>
+    /// Class for registring new user
+    /// </summary>
     public class RegisterUser
     {
-        public class Command : IRequest<Response>
+        public class Command : IRequest<string>
         {
+            /// <summary>
+            /// New user register model
+            /// </summary>
             public RegisterModel Model { get; set; }
 
             public Command(RegisterModel model)
@@ -24,7 +30,7 @@ namespace TransactionManagementAPI.Features.Commands.UsersCRUD
             }
         }
 
-        public class Handler : IRequestHandler<RegisterUser.Command, Response>
+        public class Handler : IRequestHandler<RegisterUser.Command, string>
         {
             private readonly UserManager<User> _userManager;
 
@@ -33,21 +39,24 @@ namespace TransactionManagementAPI.Features.Commands.UsersCRUD
                 _userManager = userManager;
             }
 
-            public async Task<Response> Handle(Command command, CancellationToken cancellationToken)
+            public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
+                // Validation for register model
                 var results = new List<ValidationResult>();
                 var context = new ValidationContext(command.Model);
                 if (Validator.TryValidateObject(command.Model, context, results, true))
                 {
-                    return new Response() { Status = "Not validated", Message = results.Select(e => e.ErrorMessage + "\n").ToString() };
+                    return "Not validated: " + results.Select(e => e.ErrorMessage + "\n").ToString();
                 }
 
+                // Checking user exist
                 var userExist = await _userManager.FindByNameAsync(command.Model.UserName);
                 if (userExist != null)
                 {
-                    return new Response() { Status = "Error", Message = "User already exist" };
+                    return "User already exist";
                 }
 
+                // Creating new user
                 var user = new User()
                 {
                     Email = command.Model.Email,
@@ -55,13 +64,14 @@ namespace TransactionManagementAPI.Features.Commands.UsersCRUD
                     UserName = command.Model.UserName
                 };
 
+                // Adding new user to DataBase and result checking
                 var result = await _userManager.CreateAsync(user, command.Model.Password);
                 if (!result.Succeeded)
                 {
-                    return new Response() { Status = "Error", Message = "Failed to create user" };
+                    return "Failed to create user";
                 }
 
-                return new Response() { Status = "Successfully", Message = "User created successfully" };
+                return "User created successfully";
             }
         }
     }

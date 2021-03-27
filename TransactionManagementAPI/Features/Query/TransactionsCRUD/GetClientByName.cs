@@ -8,10 +8,16 @@ using TransactionManagementAPI.Data;
 
 namespace TransactionManagementAPI.Features.Query.TransactionsCRUD
 {
-    public class GeClientByName
+    /// <summary>
+    /// Class for searching clients by name
+    /// </summary>
+    public class GetClientByName
     {
         public class Query : IRequest<IEnumerable<string>>
         {
+            /// <summary>
+            /// Client name for searching
+            /// </summary>
             public string Name { get; set; }
 
             public Query(string name)
@@ -20,7 +26,7 @@ namespace TransactionManagementAPI.Features.Query.TransactionsCRUD
             }
         }
 
-        public class Handler : IRequestHandler<GeClientByName.Query, IEnumerable<string>>
+        public class Handler : IRequestHandler<GetClientByName.Query, IEnumerable<string>>
         {
             private readonly AppDbContext _context;
 
@@ -31,6 +37,7 @@ namespace TransactionManagementAPI.Features.Query.TransactionsCRUD
 
             public async Task<IEnumerable<string>> Handle(Query request, CancellationToken cancellationToken)
             {
+                // Returns a collection of clients whose names contain the search
                 return await _context.Transactions.Where(tr => tr.ClientName.Contains(request.Name)).Select(tr => tr.ClientName).ToListAsync();
             }
         }

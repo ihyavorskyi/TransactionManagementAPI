@@ -2,6 +2,9 @@
 
 namespace TransactionManagementAPI.Data.Models
 {
+    /// <summary>
+    /// User login model
+    /// </summary>
     public class LoginModel
     {
         [Required(ErrorMessage = "User name is required")]

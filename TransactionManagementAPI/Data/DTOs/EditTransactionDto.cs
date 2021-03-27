@@ -2,6 +2,9 @@
 
 namespace TransactionManagementAPI.Data.DTOs
 {
+    /// <summary>
+    /// Model for editing transaction status
+    /// </summary>
     public class EditTransactionDto
     {
         public int Id { get; set; }

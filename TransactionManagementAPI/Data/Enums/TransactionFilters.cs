@@ -2,6 +2,9 @@
 
 namespace TransactionManagementAPI.Data.Enums
 {
+    /// <summary>
+    /// Enumeration of transaction filters (created based on TransactionStatus and TransactionType)
+    /// </summary>
     [Flags]
     public enum TransactionFilters
     {

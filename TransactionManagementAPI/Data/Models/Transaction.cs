@@ -3,6 +3,10 @@ using TransactionManagementAPI.Data.Enums;
 
 namespace TransactionManagementAPI.Data
 {
+    /// <summary>
+    /// Transaction model
+    /// </summary>
+
     [Table("Transactions")]
     public class Transaction
     {
