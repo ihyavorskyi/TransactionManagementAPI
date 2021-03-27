@@ -53,10 +53,10 @@ namespace TransactionManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Method causes parsing of Csv file,
-        /// and adds them to the database using merge on id transaction
-        /// (if the transaction exists, the status is updated).
+        /// Export transactions from csv to DataBase
         /// </summary>
+        /// <remarks> Method causes parsing of Csv file, and adds them to the database using merge on id transaction
+        /// (if the transaction exists, the status is updated).</remarks>
         /// <param name="fileName"> Name of the file that contains the transaction </param>
         /// <returns> Execution status </returns>
         [HttpPost("exportFromCsv/{fileName}")]
@@ -77,7 +77,6 @@ namespace TransactionManagementAPI.Controllers
         /// transactionFilters = numerical representation of the filter
         /// </param>
         /// <returns></returns>
-
         [HttpPost("exportToExcel")]
         public async Task<IActionResult> ExportToExcelAsync(ExcelExportSettings options)
         {
