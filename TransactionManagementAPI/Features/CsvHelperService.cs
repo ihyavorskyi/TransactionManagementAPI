@@ -11,14 +11,27 @@ namespace TransactionManagementAPI.Features.Query.WorkWithCsv
     /// <summary>
     /// Class is designed to work with Csv files
     /// </summary>
-    public class CsvHelper
+    public class CsvHelperService
     {
+        private readonly AppDbContext _context;
+
+        public CsvHelperService(AppDbContext context)
+        {
+            _context = context;
+        }
+
+        public void ExportTransactionFromCsv()
+        {
+            var transactions = ParseCsvTransaction("data");
+            MergeTransactionsToDB(transactions);
+        }
+
         /// <summary>
         /// Method of parsing transactions from a Csv file
         /// </summary>
         /// <param name="fileName"> File name for parsing </param>
         /// <returns> Transaction list </returns>
-        public static List<Transaction> ParseCsvTransaction(string fileName)
+        private List<Transaction> ParseCsvTransaction(string fileName)
         {
             var transactions = new List<Transaction>();
 
@@ -51,6 +64,31 @@ namespace TransactionManagementAPI.Features.Query.WorkWithCsv
                 });
             }
             return transactions;
+        }
+
+        /// <summary>
+        /// Method that checks for a transaction and updates its status, or creates a new one
+        /// </summary>
+        /// <param name="transactions"> List transactions </param>
+        private void MergeTransactionsToDB(List<Transaction> transactions)
+        {
+            foreach (var transaction in transactions)
+            {
+                var transactionExist = _context.Transactions.Find(transaction.Id);
+
+                // If transaction exist update her status,
+                // else create new transaction in DataBase
+                if (transactionExist != null)
+                {
+                    transactionExist.Status = transaction.Status;
+                }
+                else
+                {
+                    transaction.Id = 0;
+                    _context.Transactions.AddAsync(transaction);
+                }
+                _context.SaveChanges();
+            }
         }
     }
 }

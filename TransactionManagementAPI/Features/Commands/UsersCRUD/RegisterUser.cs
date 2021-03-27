@@ -1,13 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TouristClubApi.Data.Models;
-using TransactionManagementAPI.Data.DTOs;
 using TransactionManagementAPI.Data.Models;
 
 namespace TransactionManagementAPI.Features.Commands.UsersCRUD
@@ -41,14 +37,6 @@ namespace TransactionManagementAPI.Features.Commands.UsersCRUD
 
             public async Task<string> Handle(Command command, CancellationToken cancellationToken)
             {
-                // Validation for register model
-                var results = new List<ValidationResult>();
-                var context = new ValidationContext(command.Model);
-                if (Validator.TryValidateObject(command.Model, context, results, true))
-                {
-                    return "Not validated: " + results.Select(e => e.ErrorMessage + "\n").ToString();
-                }
-
                 // Checking user exist
                 var userExist = await _userManager.FindByNameAsync(command.Model.UserName);
                 if (userExist != null)

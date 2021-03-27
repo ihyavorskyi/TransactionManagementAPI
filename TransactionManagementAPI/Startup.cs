@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Text;
 using TouristClubApi.Data.Models;
 using TransactionManagementAPI.Data;
+using TransactionManagementAPI.Features.Query.WorkWithCsv;
 using TransactionManagementAPI.Middleware;
 
 namespace TransactionManagementAPI
@@ -115,13 +116,13 @@ namespace TransactionManagementAPI
 
             var assembly = typeof(Startup).Assembly;
             services.AddMediatR(assembly);
-
-            Console.WriteLine("ddddd");
+            services.AddTransient<CsvHelperService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, CsvHelperService csvHelper)
         {
+            csvHelper.ExportTransactionFromCsv();
             app.UseSwagger();
             app.UseSwaggerUI(op =>
             {

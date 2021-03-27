@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
-using TransactionManagementAPI.Data.DTOs;
 
 namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 {

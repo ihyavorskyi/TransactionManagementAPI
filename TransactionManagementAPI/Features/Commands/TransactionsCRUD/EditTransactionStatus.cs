@@ -1,10 +1,8 @@
 ﻿using MediatR;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TransactionManagementAPI.Data;
 using TransactionManagementAPI.Data.DTOs;
-using TransactionManagementAPI.Data.Enums;
 
 namespace TransactionManagementAPI.Features.Commands.TransactionsCRUD
 {

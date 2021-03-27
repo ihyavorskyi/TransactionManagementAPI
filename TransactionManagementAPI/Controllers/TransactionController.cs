@@ -1,7 +1,7 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using TransactionManagementAPI.Data;
 using TransactionManagementAPI.Data.DTOs;
 using TransactionManagementAPI.Data.Enums;
 using TransactionManagementAPI.Features;
@@ -14,7 +14,7 @@ namespace TransactionManagementAPI.Controllers
     /// Used to manage transaction in the system.
     /// Сan be used only by authorized users.
     /// </summary>
-    // [Authorize]
+    [Authorize]
     [Route("api/transactions")]
     [ApiController]
     public class TransactionController : ControllerBase
@@ -52,28 +52,13 @@ namespace TransactionManagementAPI.Controllers
             return Ok(res);
         }
 
-        /// <summary>
-        /// Export transactions from csv to DataBase
-        /// </summary>
-        /// <remarks> Method causes parsing of Csv file, and adds them to the database using merge on id transaction
-        /// (if the transaction exists, the status is updated).</remarks>
-        /// <param name="fileName"> Name of the file that contains the transaction </param>
-        /// <returns> Execution status </returns>
-        [HttpPost("exportFromCsv/{fileName}")]
-        public async Task<IActionResult> ExportFromCsvAsync(string fileName)
-        {
-            var command = new AddCollectionOfTransactions.Command(fileName);
-            var res = await _mediator.Send(command);
-            return Ok(res);
-        }
-
         /// <summary> Export to excel filtred transactions </summary>
         /// <remarks> To determine the numerical representation of the filter, add numbers that correspond to a certain status or type<br/>
         /// Numerical representations of filters : <br/>Pending = 1, <br/>Completed = 2, <br/>Cancelled = 4,<br/>Withdrawal = 8,<br/>Refill = 16
         /// <br/><br/> Example: to excel transactions with status "Pending","Completed" and type "Refill" transactionFilters = 19 (explanation : 1+2+16=19).
         /// </remarks>
         /// <param name="options">
-        /// fileName = name for new excel file
+        /// fileName = name for new excel file<br/>
         /// transactionFilters = numerical representation of the filter
         /// </param>
         /// <returns></returns>
